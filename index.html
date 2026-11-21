@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Milona – Lançamentos</title>
+<meta name="theme-color" content="#0B3A5B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Milona">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icone-192.png">
+<link rel="apple-touch-icon" href="icone-180.png">
+<style>
+  :root{
+    --azul:#0B3A5B; --azul2:#145C8C; --laranja:#F28C28; --verde:#1E9E5A;
+    --fundo:#F2F5F8; --cartao:#FFFFFF; --texto:#1B2733; --suave:#5E6E7E; --borda:#D5DDE5; --erro:#C0392B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fundo);color:var(--texto);min-height:100vh}
+  header{background:var(--azul);color:#fff;padding:18px 16px 22px}
+  header .marca{font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+  header h1{font-size:22px;margin-top:4px}
+  header p{font-size:14px;opacity:.85;margin-top:4px}
+  main{max-width:520px;margin:-12px auto 0;padding:0 16px 120px}
+  .cartao{background:var(--cartao);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .titulo{font-size:13px;font-weight:700;color:var(--suave);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+  label.campo{display:block;font-size:13px;font-weight:600;color:var(--suave);margin:10px 0 6px}
+  label.campo:first-child{margin-top:0}
+  input[type=text],input[type=number],textarea,select{width:100%;font-size:17px;padding:12px;border:1.5px solid var(--borda);border-radius:10px;background:#fff;color:var(--texto);font-family:inherit}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--azul2)}
+  .linha{display:grid;grid-template-columns:1fr 130px;gap:10px}
+  #placa{text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .tipo{border:1.5px solid var(--borda);background:#fff;border-radius:12px;padding:12px 4px;text-align:center;font-size:13px;font-weight:600;color:var(--texto);cursor:pointer;font-family:inherit}
+  .tipo .ic{display:block;font-size:24px;margin-bottom:4px}
+  .tipo.ativo{border-color:var(--laranja);background:#FFF4E8;color:#8A4B00;box-shadow:0 0 0 2px var(--laranja) inset}
+  .foto{display:flex;align-items:center;gap:14px;padding:14px;border:2px dashed var(--borda);border-radius:12px;margin-top:10px;cursor:pointer;position:relative;min-height:92px}
+  .foto.ok{border-style:solid;border-color:var(--verde);background:#EFFAF3}
+  .foto input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .num{flex:0 0 40px;height:40px;border-radius:50%;background:var(--azul);color:#fff;display:grid;place-items:center;font-weight:700;font-size:18px}
+  .foto.ok .num{background:var(--verde)}
+  .txt{flex:1}
+  .txt b{display:block;font-size:16px}
+  .txt span{font-size:13px;color:var(--suave)}
+  .miniatura{flex:0 0 64px;height:64px;border-radius:8px;object-fit:cover;display:none}
+  .foto.ok .miniatura{display:block}
+  .oculto{display:none !important}
+  .reais{position:relative}
+  .reais span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--suave)}
+  .reais input{padding-left:42px;font-weight:700}
+  .barra{position:fixed;left:0;right:0;bottom:0;background:#fff;padding:12px 16px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.08)}
+  .barra button{display:block;width:100%;max-width:520px;margin:0 auto;font-size:18px;font-weight:700;padding:16px;border:0;border-radius:12px;background:var(--laranja);color:#fff}
+  .barra button:disabled{background:#C9D1D9;color:#7A8794}
+  .msg{font-size:14px;margin-top:8px;color:var(--erro);text-align:center;min-height:18px}
+  .ajuda{display:block;text-align:center;font-size:14px;color:var(--azul2);margin-top:6px}
+  #tela-ok{display:none;text-align:center;padding-top:30px}
+  #tela-ok .check{width:84px;height:84px;border-radius:50%;background:var(--verde);color:#fff;font-size:46px;display:grid;place-items:center;margin:0 auto 16px}
+  #tela-ok h2{font-size:22px;margin-bottom:8px}
+  #tela-ok .prot{font-size:20px;font-weight:700;background:var(--fundo);border-radius:10px;padding:10px;margin:14px 0}
+  .aviso-demo{background:#FFF4E5;color:#8A5300;font-size:13px;padding:8px 12px;border-radius:8px;margin-bottom:14px;display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="marca">Milona Transportadora</div>
+  <h1>Lançamentos do Motorista</h1>
+  <p>Escolha o tipo, tire a(s) foto(s) e toque em ENVIAR.</p>
+</header>
+
+<main>
+  <div id="tela-form">
+    <div class="aviso-demo" id="demo">Pré-visualização — nada é enviado nesta versão.</div>
+
+    <div class="cartao">
+      <div class="titulo">Motorista</div>
+      <div id="ident" style="font-size:22px;font-weight:700">Carregando...</div>
+      <div id="identPlaca" style="font-size:17px;font-weight:700;letter-spacing:.08em;color:var(--azul2);margin-top:4px"></div>
+      <input type="hidden" id="motorista"><input type="hidden" id="placa">
+    </div>
+
+    <div class="cartao">
+      <div class="titulo">O que você vai lançar?</div>
+      <div class="tipos" id="tipos">
+        <button type="button" class="tipo ativo" data-tipo="abastecimento"><span class="ic">⛽</span>Abastecimento</button>
+        <button type="button" class="tipo" data-tipo="pedagio"><span class="ic">🛣️</span>Pedágio</button>
+        <button type="button" class="tipo" data-tipo="parcela"><span class="ic">🚛</span>Parcela do veículo</button>
+        <button type="button" class="tipo" data-tipo="borracharia"><span class="ic">🛞</span>Borracharia</button>
+        <button type="button" class="tipo" data-tipo="eletricista"><span class="ic">⚡</span>Eletricista</button>
+        <button type="button" class="tipo" data-tipo="oficina"><span class="ic">🔧</span>Oficina</button>
+      </div>
+    </div>
+
+    <!-- Abastecimento: 3 fotos -->
+    <div class="cartao" id="secAbast">
+      <label class="foto" data-k="bomba">
+        <div class="num">1</div>
+        <div class="txt"><b>Foto da bomba</b><span>Mostrando o valor do abastecimento</span></div>
+        <img class="miniatura" alt="">
+        <input type="file" accept="image/*" capture="environment">
+      </label>
+      <label class="foto" data-k="pix">
+        <div class="num">2</div>
+        <div class="txt"><b>Foto do PIX do posto</b><span>Comprovante do pagamento (câmera ou galeria)</span></div>
+        <img class="miniatura" alt="">
+        <input type="file" accept="image/*">
+      </label>
+      <label class="foto" data-k="painel">
+        <div class="num">3</div>
+        <div class="txt"><b>Foto do painel</b><span>Mostrando a quilometragem (KM)</span></div>
+        <img class="miniatura" alt="">
+        <input type="file" accept="image/*" capture="environment">
+      </label>
+    </div>
+
+    <!-- Despesas: valor + comprovante -->
+    <div class="cartao oculto" id="secDesp">
+      <label class="campo" for="valor">Valor pago</label>
+      <div class="reais"><span>R$</span><input type="text" id="valor" inputmode="decimal" placeholder="0,00"></div>
+      <label class="foto" data-k="comprovante">
+        <div class="num">📷</div>
+        <div class="txt"><b id="fotoDespTitulo">Foto do comprovante</b><span id="fotoDespSub">Câmera ou galeria</span></div>
+        <img class="miniatura" alt="">
+        <input type="file" accept="image/*">
+      </label>
+    </div>
+
+    <div class="cartao">
+      <label class="campo" for="obs" id="obsRotulo">Observação (opcional)</label>
+      <textarea id="obs" rows="2" maxlength="300" placeholder="Ex.: posto na BR-153, km 420"></textarea>
+    </div>
+
+    <a class="ajuda" href="https://wa.me/5511981705232" target="_blank">Dúvidas? Falar com Mateus no WhatsApp</a>
+  </div>
+
+  <div id="tela-ok">
+    <div class="check">✓</div>
+    <h2 id="okTitulo">Enviado!</h2>
+    <p>A administração da Milona já recebeu o lançamento.</p>
+    <div class="prot" id="protocolo"></div>
+    <div id="lido" style="font-size:15px;line-height:1.6;margin-bottom:10px"></div>
+    <p style="font-size:14px;color:var(--suave)">Guarde o protocolo, se precisar.</p>
+  </div>
+</main>
+
+<div class="barra">
+  <button id="btn" disabled>ENVIAR</button>
+  <div class="msg" id="msg"></div>
+</div>
+
+<script>
+  var URL_ENVIO = 'https://script.google.com/macros/s/AKfycbxq5VLJoMThYoqCzFz3CIzXZlp6BX3E_EpmFKdbGoBpMEzLxkhOTqw0I_drvGXNKXokwQ/exec';
+  var TOKEN_ENVIO = 'rbQVuDiXo0XwQ7jhenf0Nl5H';
+  var TIPOS = {
+    abastecimento: {nome:'Abastecimento'},
+    pedagio:     {nome:'Pedágio', foto:'Foto do comprovante do pedágio', sub:'Cupom ou recibo (câmera ou galeria)', obs:'Praça / rodovia (opcional)'},
+    parcela:     {nome:'Parcela do veículo', foto:'Comprovante da parcela', sub:'Boleto pago ou comprovante (câmera ou galeria)', obs:'Mês de referência (opcional)'},
+    borracharia: {nome:'Borracharia', foto:'Nota ou recibo da borracharia', sub:'Câmera ou galeria', obs:'Serviço feito (ex.: conserto de pneu)'},
+    eletricista: {nome:'Eletricista', foto:'Nota ou recibo do eletricista', sub:'Câmera ou galeria', obs:'Serviço feito'},
+    oficina:     {nome:'Oficina', foto:'Nota ou recibo da oficina', sub:'Câmera ou galeria', obs:'Serviço feito'}
+  };
+  var tipo = 'abastecimento';
+  var fotos = {bomba:null, pix:null, painel:null, comprovante:null};
+  var codigo = '';
+  var enviando = false, concluido = false;
+  var temServidor = !/^file:/.test(location.protocol);
+  var $ = function(id){ return document.getElementById(id); };
+  if (!temServidor) $('demo').style.display = 'block';
+
+  function lsGet(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
+  function lsSet(k,v){ try { localStorage.setItem(k, v); } catch(e){} }
+
+  /* ---- motorista do link pessoal ---- */
+  function bloquear(t){
+    $('tela-form').innerHTML = '<div class="cartao" style="text-align:center;padding:30px 16px"><div style="font-size:42px">🔒</div>' +
+      '<p style="margin-top:10px;font-size:16px;line-height:1.5"></p></div>';
+    $('tela-form').querySelector('p').textContent = t;
+    $('btn').style.display = 'none';
+  }
+  function carregarMotorista(c){
+    codigo = c || '';
+    if (!codigo) { bloquear('Este link não é pessoal. Peça à administração da Milona o seu link de acesso.'); return; }
+    fetch(URL_ENVIO + '?acao=motorista&cod=' + encodeURIComponent(codigo))
+      .then(function(r){ return r.json(); })
+      .then(function(r){
+        if (r && r.ok) {
+          $('motorista').value = r.motorista; $('placa').value = r.placa;
+          $('ident').textContent = r.motorista; $('identPlaca').textContent = 'Placa ' + r.placa;
+          validar();
+        } else { bloquear(r && r.erro ? r.erro : 'Link inválido.'); }
+      })
+      .catch(function(){ bloquear('Sem conexão. Verifique a internet e abra o link novamente.'); });
+  }
+  if (temServidor) {
+    var cod = new URLSearchParams(location.search).get('m') || '';
+    if (cod) lsSet('milona_codigo', cod); else cod = lsGet('milona_codigo');
+    carregarMotorista(cod);
+  } else {
+    $('motorista').value = 'Sérgio'; $('placa').value = 'BYX5B88';
+    $('ident').textContent = 'Sérgio'; $('identPlaca').textContent = 'Placa BYX5B88';
+  }
+
+  if ('serviceWorker' in navigator && temServidor) { try { navigator.serviceWorker.register('sw.js'); } catch(e) {} }
+
+  /* ---- tipo de lançamento ---- */
+  document.querySelectorAll('.tipo').forEach(function(b){
+    b.addEventListener('click', function(){
+      tipo = b.dataset.tipo;
+      document.querySelectorAll('.tipo').forEach(function(x){ x.classList.toggle('ativo', x === b); });
+      var ehAbast = tipo === 'abastecimento';
+      $('secAbast').classList.toggle('oculto', !ehAbast);
+      $('secDesp').classList.toggle('oculto', ehAbast);
+      if (!ehAbast) {
+        $('fotoDespTitulo').textContent = TIPOS[tipo].foto;
+        $('fotoDespSub').textContent = TIPOS[tipo].sub;
+        $('obsRotulo').textContent = TIPOS[tipo].obs;
+        $('obs').placeholder = '';
+      } else {
+        $('obsRotulo').textContent = 'Observação (opcional)';
+        $('obs').placeholder = 'Ex.: posto na BR-153, km 420';
+      }
+      validar();
+    });
+  });
+
+  /* ---- fotos ---- */
+  function comprimir(file){
+    return new Promise(function(res, rej){
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function(){
+        var max = 1600, w = img.naturalWidth, h = img.naturalHeight;
+        var s = Math.min(1, max / Math.max(w, h));
+        w = Math.round(w * s); h = Math.round(h * s);
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg', 0.75));
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error('Não foi possível ler a foto.')); };
+      img.src = url;
+    });
+  }
+  document.querySelectorAll('.foto').forEach(function(box){
+    var input = box.querySelector('input'), k = box.dataset.k;
+    input.addEventListener('change', function(){
+      var f = input.files && input.files[0];
+      if (!f) return;
+      $('msg').textContent = 'Preparando foto...';
+      comprimir(f).then(function(dataUrl){
+        fotos[k] = dataUrl;
+        box.querySelector('.miniatura').src = dataUrl;
+        box.classList.add('ok');
+        $('msg').textContent = '';
+        validar();
+      }).catch(function(e){ $('msg').textContent = e.message; });
+      input.value = '';
+    });
+  });
+
+  ['valor'].forEach(function(id){ $(id).addEventListener('input', validar); });
+
+  function valorNum(){
+    var t = $('valor').value.replace(/[^\d,.]/g, '');
+    if (t.indexOf(',') > -1) t = t.replace(/\./g, '').replace(',', '.');
+    var n = parseFloat(t); return isFinite(n) ? n : 0;
+  }
+  function validar(){
+    var ok = $('motorista').value.trim().length >= 2 &&
+             $('placa').value.replace(/[^A-Za-z0-9]/g,'').length >= 7;
+    if (tipo === 'abastecimento') ok = ok && fotos.bomba && fotos.pix && fotos.painel;
+    else ok = ok && fotos.comprovante && valorNum() > 0;
+    $('btn').disabled = !ok || enviando;
+    return ok;
+  }
+
+  /* ---- envio ---- */
+  $('btn').addEventListener('click', function(){
+    if (concluido) { novo(); return; }
+    if (!validar() || enviando) return;
+    enviando = true; $('btn').disabled = true;
+    $('btn').textContent = tipo === 'abastecimento' ? 'ENVIANDO E LENDO FOTOS...' : 'ENVIANDO...';
+    $('msg').textContent = '';
+
+    var dados = {
+      token: TOKEN_ENVIO, tipo: tipo, codigo: codigo,
+      motorista: $('motorista').value.trim(),
+      placa: $('placa').value.trim(),
+      obs: $('obs').value.trim(), descricao: $('obs').value.trim()
+    };
+    if (tipo === 'abastecimento') {
+      dados.fotos = { bomba: fotos.bomba.split(',')[1], pix: fotos.pix.split(',')[1], painel: fotos.painel.split(',')[1] };
+    } else {
+      dados.valor = valorNum();
+      dados.fotos = { comprovante: fotos.comprovante.split(',')[1] };
+    }
+
+    if (temServidor) {
+      fetch(URL_ENVIO, {method: 'POST', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify(dados)})
+        .then(function(r){ return r.json(); })
+        .then(function(r){ if (r && r.ok) sucesso(r); else falha(new Error(r && r.erro ? r.erro : 'Falha no envio.')); })
+        .catch(function(){ falha(new Error('Sem conexão.')); });
+    } else {
+      setTimeout(function(){ sucesso({protocolo:'DEMO-0001', tipo: TIPOS[tipo].nome, valor: dados.valor, valorBomba: tipo==='abastecimento'?1250.4:null}); }, 1000);
+    }
+  });
+
+  function sucesso(r){
+    enviando = false; concluido = true;
+    $('tela-form').style.display = 'none';
+    $('tela-ok').style.display = 'block';
+    $('okTitulo').textContent = (r.tipo || TIPOS[tipo].nome) + ' enviado!';
+    $('protocolo').textContent = r.protocolo;
+    var m = function(v){ return 'R$ ' + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); };
+    var linhas = [];
+    if (r.valor != null) linhas.push('Valor: <b>' + m(r.valor) + '</b>');
+    if (r.valorBomba != null) linhas.push('Valor lido na bomba: <b>' + m(r.valorBomba) + '</b>');
+    if (r.valorPix != null) linhas.push('Valor lido no PIX: <b>' + m(r.valorPix) + '</b>');
+    if (r.km != null) linhas.push('KM lida no painel: <b>' + Number(r.km).toLocaleString('pt-BR') + '</b>');
+    $('lido').innerHTML = linhas.join('<br>');
+    $('btn').disabled = false; $('btn').textContent = 'NOVO LANÇAMENTO';
+    window.scrollTo(0,0);
+  }
+
+  function falha(e){
+    enviando = false; $('btn').textContent = 'ENVIAR'; validar();
+    $('msg').textContent = 'Não enviou: ' + (e && e.message ? e.message : 'sem sinal?') + ' Tente de novo.';
+  }
+
+  function novo(){
+    concluido = false;
+    fotos = {bomba:null, pix:null, painel:null, comprovante:null};
+    document.querySelectorAll('.foto').forEach(function(b){ b.classList.remove('ok'); b.querySelector('.miniatura').removeAttribute('src'); });
+    $('obs').value = ''; $('valor').value = '';
+    $('tela-ok').style.display = 'none'; $('tela-form').style.display = 'block';
+    $('btn').textContent = 'ENVIAR'; validar();
+  }
+</script>
+</body>
+</html>
