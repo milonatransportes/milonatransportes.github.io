@@ -84,8 +84,8 @@
       <div class="titulo">O que você vai lançar?</div>
       <div class="tipos" id="tipos">
         <button type="button" class="tipo ativo" data-tipo="abastecimento"><span class="ic">⛽</span>Abastecimento</button>
-        <button type="button" class="tipo" data-tipo="pedagio"><span class="ic">🛣️</span>Pedágio</button>
-        <button type="button" class="tipo" data-tipo="parcela"><span class="ic">🚛</span>Parcela do veículo</button>
+        <button type="button" class="tipo restrito" data-tipo="pedagio" style="display:none"><span class="ic">🛣️</span>Pedágio</button>
+        <button type="button" class="tipo restrito" data-tipo="parcela" style="display:none"><span class="ic">🚛</span>Parcela do veículo</button>
         <button type="button" class="tipo" data-tipo="borracharia"><span class="ic">🛞</span>Borracharia</button>
         <button type="button" class="tipo" data-tipo="eletricista"><span class="ic">⚡</span>Eletricista</button>
         <button type="button" class="tipo" data-tipo="oficina"><span class="ic">🔧</span>Oficina</button>
@@ -160,6 +160,13 @@
     eletricista: {nome:'Eletricista', foto:'Nota ou recibo do eletricista', sub:'Câmera ou galeria', obs:'Serviço feito'},
     oficina:     {nome:'Oficina', foto:'Nota ou recibo da oficina', sub:'Câmera ou galeria', obs:'Serviço feito'}
   };
+  /* Pedágio e Parcela do veículo: só aparecem para estes códigos (Mateus) */
+  var CODIGOS_COMPLETOS = ['03226875eb'];
+  function ajustarBotoes(){
+    var todos = CODIGOS_COMPLETOS.indexOf(codigo) > -1;
+    document.querySelectorAll('.tipo.restrito').forEach(function(b){ b.style.display = todos ? '' : 'none'; });
+    $('tipos').style.gridTemplateColumns = todos ? 'repeat(3,1fr)' : 'repeat(2,1fr)';
+  }
   var tipo = 'abastecimento';
   var fotos = {bomba:null, pix:null, painel:null, comprovante:null};
   var codigo = '';
@@ -187,6 +194,7 @@
         if (r && r.ok) {
           $('motorista').value = r.motorista; $('placa').value = r.placa;
           $('ident').textContent = r.motorista; $('identPlaca').textContent = 'Placa ' + r.placa;
+          ajustarBotoes();
           validar();
         } else { bloquear(r && r.erro ? r.erro : 'Link inválido.'); }
       })
