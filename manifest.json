@@ -1,7 +1,6 @@
 {
   "name": "Milona – Lançamentos do Motorista",
   "short_name": "Milona",
-  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F2F5F8",
